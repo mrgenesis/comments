@@ -3,7 +3,7 @@ import React from "react";
 
 interface IHidden {
   mode?: 'visibility' | 'display';
-  status: boolean;
+  status?: boolean;
   children: React.ReactNode;
 }
 const Hidden: React.FC<IHidden> = (props) => {
