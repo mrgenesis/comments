@@ -15,9 +15,7 @@ import UIDivider from "../UI/dataDisplay/Divider";
 
 import { Comment, CommentCollection } from "../../services/db/Comment";
 import { ListsCollection } from "../../services/db/Lists";
-
-const statusList: IHistoryStatus[] = 
-['Caixa Postal', 'Número não existe', 'Desligou inesperadamente', 'Ninguém atende', 'Ligação efetuada', 'Ocupado', 'Reação positiva', 'Não domostrou reação', 'Revisita'];
+import { Texts } from "../../__config";
 
 const registry = new Registry('records');
 const listsCollection = new ListsCollection();
@@ -36,16 +34,16 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
       dispatch({ type: 'DONE' });
       return dispatchNotice({ type: 'GENERIC', payload: { message: 'O status deve ser preenchido.', severity: 'warning', hiddenStatus: false } });
     }
-    const data = new Comment({ status, message });    
+    const comment = new Comment({ status, message });    
     
     try {  
-      await commentCollection.create({ ...data }); // Save a new comment
+      await commentCollection.create(comment.data); // Save a new comment
 
       await listsCollection.selectById(listId);
       await listsCollection.update({ lastItemUpdated: clientId });
 
       await registry.selectById(String(clientId));
-      await registry.update({ lastStatus: data.status });
+      await registry.update({ lastStatus: comment.status });
     } catch (err: any) {      
       dispatchNotice({ type: 'ERROR', payload: { hiddenStatus: false, message: err.message, severity: 'error' } });
       console.error('console.error(err.message)', err);
@@ -72,7 +70,7 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
               Escolha um Status
             </UIMenuItem>
             {
-              statusList.map(statusName => 
+              Texts.status.map(statusName => 
                 <UIMenuItem 
                 key={uid()} 
                 value={statusName}
