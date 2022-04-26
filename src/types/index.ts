@@ -15,4 +15,5 @@ export type IHistoryStatus =
 | 'Ligação efetuada' 
 | 'Reação positiva' 
 | 'Não domostrou reação' 
+| 'Ocupado'
 | 'Revisita';
