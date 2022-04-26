@@ -32,6 +32,9 @@ export class Generic<T> {
     this._docId = docId;
     this._docRef = doc(firestore, this.collName, docId);
   }
+  get docSnap() {
+    return this._docSnap;
+  }
   async selectById(docId: string): Promise<this> {
     this._docId = docId;
     this._docRef = doc(firestore, this.collName, docId);
