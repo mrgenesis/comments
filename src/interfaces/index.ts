@@ -22,5 +22,29 @@ export interface IList {
   }
 };
 
-export interface LoaderState { loading: boolean };
+export interface LoaderState { loading: boolean, message?: string; };
 export interface LoaderAction { type: string, payload?: LoaderState };
+
+
+export interface IAddress {
+  street?: string;
+  number?: number | string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+}
+export interface IContactPhones {
+  callNumber?: number;
+  messagesNumber?: number;
+}
+export interface IRegistry {
+  name?: string;
+  contactPhones?: IContactPhones;
+  address?: IAddress;
+}
+
+export interface IComment {
+  message?: string;
+  status: IHistoryStatus;
+  timestamp: number;
+}
