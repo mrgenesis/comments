@@ -102,14 +102,15 @@ export class Generic<T> {
     this._querySnapshot.docs.forEach(doc => result.push(doc.id));
     return result;
   }
-  async createEmptyDoc(): Promise<this> {
+  async createEmptyDoc(): Promise<boolean> {
     if (dataTypes.isUndefined(this._docSnap)) {
       throw new Error('Run this.getDoc() first.');
     }
-    if(dataTypes.invert(this._docSnap.exists())) {
-      await setDoc(this._docRef as DocumentReference, {});
+    if(this._docSnap.exists()) {
+      return false;
     }
-    return this;
+    await setDoc(this._docRef as DocumentReference, {});
+    return true;
   }
   async update(data: any) {
     await this.createEmptyDoc();
