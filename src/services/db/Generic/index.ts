@@ -7,24 +7,21 @@ import {
   getDoc, 
   addDoc, 
   setDoc, 
-  orderBy,
   getDocs, 
   updateDoc, 
-  onSnapshot,
   collection,
   QuerySnapshot, 
   DocumentSnapshot, 
   DocumentReference, 
   CollectionReference,
   Query,
-  FieldPath,
-  OrderByDirection,
-  QueryConstraintType,
-  WhereFilterOp,
   QueryConstraint,
 } from "firebase/firestore";
 
+import { ISetQueryConstraint, setQueryConstraint } from "./set-query";
 import { dataTypes } from "../../../commun/utils/types";
+import { onDocSnapshot } from "./on-doc-snapshot";
+import { onQuerySnapshot } from "./on-query-snapshot copy";
 
 export class Generic<T> {  
   protected readonly collectionRef: CollectionReference;
@@ -41,44 +38,28 @@ export class Generic<T> {
   }
   set docId(docId: string) {
     this._docId = docId;
-    this._docRef = doc(firestore, this.collName, docId);
+    this.setDocRef();
+  }
+  setDocRef() {
+    this._docRef = doc(firestore, this.collName, this._docId);
   }
   get docSnap() {
     return this._docSnap;
   }
-  setQuery({ queryConstraint, fieldPath, directionStr, opStr, value }: { value?: any, opStr?: WhereFilterOp, fieldPath?: string | FieldPath, directionStr?: OrderByDirection, queryConstraint: QueryConstraintType }): this {
-    switch(queryConstraint) {
-      case 'orderBy':
-        this.queryConstraints.push(orderBy(fieldPath as string | FieldPath, directionStr));
-        break;
-      case 'where':
-        this.queryConstraints.push(where(fieldPath as string | FieldPath, opStr as WhereFilterOp, value));
-        break;
-    }
+  setQueryConstraint({ queryConstraint, fieldPath, directionStr, opStr, value }: ISetQueryConstraint): this {
+    this.queryConstraints.push(setQueryConstraint({ queryConstraint, fieldPath, directionStr, opStr, value }));
     this._query = query(this.collectionRef, ...this.queryConstraints);
     return this;
   }
-  onSnapshotDoc(setResult: (t: T) => void): void {
-    onSnapshot(this._docRef, { includeMetadataChanges: true }, snapDoc => {
-      if (snapDoc.exists() && !snapDoc.metadata.hasPendingWrites) {
-        setResult(snapDoc.data() as T);
-      }
-    });
+  onDocSnapshot(setResult: (t: T) => void): void {
+    onDocSnapshot(this._docRef, setResult);
   }
   
-  onSnapshotQuery(setResult: (t: T[]) => void) {
-    let result: T[] = [];
-    onSnapshot(this._query, { includeMetadataChanges: true }, snap => {
-      result = [];
-      if (!snap.metadata.hasPendingWrites) {
-        snap.docs.forEach(doc => result.push(doc.data() as T));
-        setResult(result);
-      }
-    });
+  onQuerySnapshot(setResult: (t: T[]) => void) {
+    onQuerySnapshot(this._query, setResult);
   }
   async selectById(docId: string): Promise<this> {
-    this._docId = docId;
-    this._docRef = doc(firestore, this.collName, docId);
+    this.docId = docId;
     this._docSnap = await getDoc(this._docRef);
     return this;
   }

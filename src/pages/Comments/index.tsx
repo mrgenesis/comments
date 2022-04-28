@@ -55,14 +55,14 @@ export default function CommentsPage() {
       dispatchLoader({ type: 'LOADING' });
       
       const commentCollection = new CommentCollection(clientId as string);
-      commentCollection.setQuery({ queryConstraint: 'orderBy', fieldPath: 'timestamp', directionStr: "desc" });
-      commentCollection.onSnapshotQuery(commentHistory => {
+      commentCollection.setQueryConstraint({ queryConstraint: 'orderBy', fieldPath: 'timestamp', directionStr: "desc" });
+      commentCollection.onQuerySnapshot(commentHistory => {
         setHistoryComments(commentHistory);
         dispatchLoader({ type: 'DONE' });
       });      
       
       registryCollection.selectById(clientId as string).then(() => {
-        registryCollection.onSnapshotDoc(registry => {
+        registryCollection.onDocSnapshot(registry => {
           setRegistry(registry);
           dispatchLoader({ type: 'DONE' });
         });
