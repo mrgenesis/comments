@@ -6,4 +6,13 @@ export class RegistryModel {
   name?: string;
 }
 
-export class Registry extends Generic<RegistryModel> {}
+export class Registry extends Generic<RegistryModel> {
+  async addListIdProperty(listId: string): Promise<void> {
+    // await selectById();
+    return this.update({
+      _config: {
+        listId
+      }
+    });
+  }
+}
