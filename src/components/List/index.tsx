@@ -14,8 +14,8 @@ const List: React.FunctionComponent<{}> = () => {
   
   useEffect(() => {
     dispatch({ type: 'LOADING' });
-    listsCollection.selectAllDocs().then(instanceListsCollection => {
-      setLists(instanceListsCollection.docsData());
+    listsCollection.onQuerySnapshot(lists => {
+      setLists(lists);
       dispatch({ type: 'DONE' });
     });
   }, []);
