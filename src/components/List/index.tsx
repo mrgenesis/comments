@@ -1,12 +1,12 @@
-import { onSnapshot, query } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { LoaderContext } from '../../contexts/loader';
-import { getCollection } from '../../services/db';
 import { IList } from '../../interfaces';
 import Hidden from '../UI/dataDisplay/Hidden';
 import ListAdd from './Add';
 import DisplayLists from './DisplayLists';
 
+import { ListsCollection } from '../../services/db/Lists';
+const listsCollection = new ListsCollection();
 
 const List: React.FunctionComponent<{}> = () => {
   const [stateLoading, dispatch] = useContext(LoaderContext);
@@ -14,20 +14,11 @@ const List: React.FunctionComponent<{}> = () => {
   
   useEffect(() => {
     dispatch({ type: 'LOADING' });
-    let listNames: IList[] = [];
-    const listsCollRef = getCollection('lists');
-    const q = query(listsCollRef);
-
-    onSnapshot(q, (snapshot) => {
-      listNames = [];
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        listNames.push({ name: doc.id, beginning: data.beginning, end: data.end, lastItemUpdated: data.lastItemUpdated, configOfButtonNext: data.configOfButtonNext })
-      });
-      setLists(listNames);
+    listsCollection.selectAllDocs().then(instanceListsCollection => {
+      setLists(instanceListsCollection.docsData());
       dispatch({ type: 'DONE' });
     });
-  }, [dispatch]);
+  }, []);
   
   return (
     <>
