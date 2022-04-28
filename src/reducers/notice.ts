@@ -12,7 +12,7 @@ export default function noticeReducer(state: INotice, action: NoticeAction): INo
     case 'SUCCESS':
       return { ...state, hiddenStatus: false, severity: "success", ...action?.payload };
     case 'ERROR':
-      return { ...state, hiddenStatus: false, severity: 'error', ...action?.payload };
+      return { ...resetState, hiddenStatus: false, severity: 'error', ...action?.payload };
     case 'GENERIC':
       return { ...resetState, ...action.payload };
     case 'RESET':
