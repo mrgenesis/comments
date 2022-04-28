@@ -8,7 +8,9 @@ export class RegistryModel {
 
 export class Registry extends Generic<RegistryModel> {
   async addListIdProperty(listId: string): Promise<void> {
-    // await selectById();
+    if(this._docSnap.exists()) {
+      return;
+    }
     return this.update({
       _config: {
         listId
