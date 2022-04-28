@@ -1,5 +1,5 @@
 
-import { firestore  } from "../firebase";
+import { firestore  } from "../../firebase";
 import { 
   doc, 
   query, 
@@ -7,16 +7,24 @@ import {
   getDoc, 
   addDoc, 
   setDoc, 
+  orderBy,
   getDocs, 
   updateDoc, 
-  collection, 
+  onSnapshot,
+  collection,
   QuerySnapshot, 
   DocumentSnapshot, 
   DocumentReference, 
   CollectionReference,
+  Query,
+  FieldPath,
+  OrderByDirection,
+  QueryConstraintType,
+  WhereFilterOp,
+  QueryConstraint,
 } from "firebase/firestore";
 
-import { dataTypes } from "../../commun/utils/types";
+import { dataTypes } from "../../../commun/utils/types";
 
 export class Generic<T> {  
   protected readonly collectionRef: CollectionReference;
@@ -24,9 +32,12 @@ export class Generic<T> {
   protected _docId!: string;
   protected _docRef!: DocumentReference;
   protected _docSnap!: DocumentSnapshot;
+  protected _query!: Query;
+  protected queryConstraints: QueryConstraint[] = [];
 
   constructor(private readonly collName: string) {
     this.collectionRef = collection(firestore, this.collName);
+    this._query = this.collectionRef;
   }
   set docId(docId: string) {
     this._docId = docId;
@@ -34,6 +45,36 @@ export class Generic<T> {
   }
   get docSnap() {
     return this._docSnap;
+  }
+  setQuery({ queryConstraint, fieldPath, directionStr, opStr, value }: { value?: any, opStr?: WhereFilterOp, fieldPath?: string | FieldPath, directionStr?: OrderByDirection, queryConstraint: QueryConstraintType }): this {
+    switch(queryConstraint) {
+      case 'orderBy':
+        this.queryConstraints.push(orderBy(fieldPath as string | FieldPath, directionStr));
+        break;
+      case 'where':
+        this.queryConstraints.push(where(fieldPath as string | FieldPath, opStr as WhereFilterOp, value));
+        break;
+    }
+    this._query = query(this.collectionRef, ...this.queryConstraints);
+    return this;
+  }
+  onSnapshotDoc(setResult: (t: T) => void): void {
+    onSnapshot(this._docRef, { includeMetadataChanges: true }, snapDoc => {
+      if (snapDoc.exists() && !snapDoc.metadata.hasPendingWrites) {
+        setResult(snapDoc.data() as T);
+      }
+    });
+  }
+  
+  onSnapshotQuery(setResult: (t: T[]) => void) {
+    let result: T[] = [];
+    onSnapshot(this._query, { includeMetadataChanges: true }, snap => {
+      result = [];
+      if (!snap.metadata.hasPendingWrites) {
+        snap.docs.forEach(doc => result.push(doc.data() as T));
+        setResult(result);
+      }
+    });
   }
   async selectById(docId: string): Promise<this> {
     this._docId = docId;
@@ -80,7 +121,6 @@ export class Generic<T> {
     this._querySnapshot.docs.forEach(doc => result.push(doc.id));
     return result;
   }
-
   async createEmptyDoc(): Promise<this> {
     if (dataTypes.isUndefined(this._docSnap)) {
       throw new Error('Run this.getDoc() first.');
