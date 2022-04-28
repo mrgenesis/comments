@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react';
 import UIChip from '../UI/dataDisplay/Chip';
 import UITypography from '../UI/dataDisplay/Typography';
 import Icon from '@mdi/react';
-import { mdiPhoneOutgoing, mdiCellphoneMessage } from '@mdi/js';
+import { mdiForumOutline, mdiPhoneOutgoing, mdiCellphoneMessage } from '@mdi/js';
 import Hidden from '../UI/dataDisplay/Hidden';
 import { LoaderContext } from '../../contexts/loader';
 import RegistryEditField from './EditField';
@@ -81,6 +81,7 @@ const Registry: React.FC<IRegistry & { id: string, updateFields: (fields: any) =
                       />)
                   : ''
               }
+              <a style={{ verticalAlign: 'bottom' }} target='_blank' rel="noopener noreferrer" href={`https://wa.me/55${contactPhones?.messagesNumber || contactPhones?.callNumber}`}><Icon path={mdiForumOutline} size={0.5} title={`Envie uma mensagem via WhatsApp para ${contactPhones?.messagesNumber || contactPhones?.callNumber}`} /></a>
           </UITypography>
         : <>
             <RegistryEditField 
