@@ -1,11 +1,13 @@
 
 import { IList } from "../../interfaces";
-import { IHistoryStatus } from "../../types";
+import { IHistoryStatus, ListTypes, IsPhoneNumberId } from "../../types";
 import { Generic } from "./Generic";
  import { collectionsNames } from "../../__config";
 
 export class ListsModel implements IList {
   name: string;
+  listType: ListTypes;
+  isPhoneNumberId: IsPhoneNumberId;
   beginning: number;
   end: number;
   lastItemUpdated: number;
@@ -13,8 +15,10 @@ export class ListsModel implements IList {
     behavior: string;
     status: IHistoryStatus;
   };
-  constructor({ name, beginning, end, lastItemUpdated, configOfButtonNext }: IList) {
+  constructor({ name, listType, isPhoneNumberId, beginning, end, lastItemUpdated, configOfButtonNext }: IList) {
     this.name = name;
+    this.listType = listType;
+    this.isPhoneNumberId = isPhoneNumberId;
     this.beginning = beginning;
     this.end = end;
     this.lastItemUpdated = lastItemUpdated;

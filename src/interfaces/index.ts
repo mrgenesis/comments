@@ -1,5 +1,5 @@
 import React from "react";
-import { IHistoryStatus } from "../types";
+import { IHistoryStatus, IsPhoneNumberId, ListTypes } from "../types";
 
 export interface INotice {
   hiddenStatus?: boolean;
@@ -13,6 +13,8 @@ export interface NoticeAction {
 }
 export interface IList {
   name: string;
+  listType: ListTypes;
+  isPhoneNumberId: IsPhoneNumberId;
   beginning: number;
   end: number;
   lastItemUpdated: number;

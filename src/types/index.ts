@@ -17,3 +17,6 @@ export type IHistoryStatus =
 | 'Não domostrou reação' 
 | 'Ocupado'
 | 'Revisita';
+
+export type ListTypes = 'Sequencial';
+export type IsPhoneNumberId = '0' | '1';

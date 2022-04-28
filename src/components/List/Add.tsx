@@ -7,6 +7,7 @@ import UITextField from '../UI/fields/TextField';
 
 import { ListsCollection } from '../../services/db/Lists';
 import { NoticeContext } from '../../contexts/notice';
+// import { ListTypes, IsPhoneNumberId } from '../../types';
 
 const listsCollection = new ListsCollection();
 
@@ -14,6 +15,12 @@ const ListAdd: React.FunctionComponent<{}> = () => {
   const [state, dispatch] = useContext(LoaderContext);
   const [, dispatchNotice] = useContext(NoticeContext);
   const [listName, setListName] = useState('');
+  
+  // const [listType, setListType] = useState<ListTypes>('Sequencial');
+  const listType = 'Sequencial';
+  // const [isPhoneNumberId, setIsPhoneNumberId] = useState<IsPhoneNumberId>('1');
+  const isPhoneNumberId = '1';
+
   let [beginning, setBeginning] = useState(0);
   const [end, setEnd] = useState(0);
   const navegate = useNavigate();
@@ -23,7 +30,7 @@ const ListAdd: React.FunctionComponent<{}> = () => {
     e.preventDefault();
     try {
       dispatchNotice({ type: 'RESET' });
-      await listsCollection.create({ beginning, end, lastItemUpdated: (beginning - 1), name: listName, configOfButtonNext: { status: '', behavior: '' }  }, listName);
+      await listsCollection.create({ listType, isPhoneNumberId, beginning, end, lastItemUpdated: (beginning - 1), name: listName, configOfButtonNext: { status: '', behavior: '' }  }, listName);
       navegate('/');
       setListName('');
       setBeginning(0);
