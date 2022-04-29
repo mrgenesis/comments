@@ -13,14 +13,12 @@ import { NoticeContext } from "../../contexts/notice";
 import { addOrDecreaseOne, nextOfQueue } from "../../commun/utils";
 import NextButtonBehavior from "../../components/Search/NextButtonBehavior";
 
-import { CommentCollection } from "../../services/db/Comment";
 import { Registry as RegistryCollection } from "../../services/db/Registry";
 import { generateContactLink } from "../../commun/utils/generate-contact-link";
 import { IList } from "../../interfaces";
 import { urlValidation } from "./urlValidation";
 
 const registryCollection = new RegistryCollection('records');
-
 
 export default function CommentsPage() {
   const { clientId } = useParams();
@@ -39,7 +37,6 @@ export default function CommentsPage() {
 
   const [behavior, setBehavior] = useState<'addOrDecreaseOne' | 'nextOfQueue'>('addOrDecreaseOne');
   const [registry, setRegistry] = useState<DocumentData>({});
-  const [historyComments, setHistoryComments] = useState<DocumentData[]>([]);
 
   const [loadId, setLoadId] = useState(true);
   
@@ -53,32 +50,25 @@ export default function CommentsPage() {
         setLoadId(false);
         urlValidation(urlSearshParams);
 
-        dispatchLoader({ type: 'LOADING' });
-        
-        const commentCollection = new CommentCollection(clientId as string);
-        commentCollection.setQueryConstraint({ queryConstraint: 'orderBy', fieldPath: 'timestamp', directionStr: "desc" });
-        commentCollection.onQuerySnapshot(commentHistory => {
-          setHistoryComments(commentHistory);
-          dispatchLoader({ type: 'DONE' });
-        });      
+        dispatchLoader({ type: 'LOADING' });    
       
-      registryCollection.selectById(clientId as string).then(() => {
-        registryCollection.onDocSnapshot(registry => {
-          setRegistry(registry);
-          dispatchLoader({ type: 'DONE' });
+        registryCollection.selectById(clientId as string).then(() => {
+          registryCollection.onDocSnapshot(registry => {
+            setRegistry(registry);
+            dispatchLoader({ type: 'DONE' });
+          });
+        })
+        .catch(err => console.error('registryCollection:', err))
+        .finally(() => {
+          registryCollection.firstSave(urlSearshParams.listId);
         });
-      })
-      .catch(err => console.error('registryCollection:', err))
-      .finally(() => {
-        registryCollection.firstSave(urlSearshParams.listId);
-      })
       
-    } catch(err: any) {
-      console.error(err);
-      dispatchNoiceBoard({ type: 'ERROR', payload: { children: <a href="/">Página de listas</a>, message: `${err.message} Na maioria dos casos é possível corrigir isso voltando à página para selecionar a lista.` } })
+      } catch(err: any) {
+        console.error(err);
+        dispatchNoiceBoard({ type: 'ERROR', payload: { children: <a href="/">Página de listas</a>, message: `${err.message} Na maioria dos casos é possível corrigir isso voltando à página para selecionar a lista.` } })
+      }
     }
-    }
-  }, [loadId, clientId, dispatchLoader, urlSearshParams, dispatchNoiceBoard]);
+  }, [loadId, clientId, dispatchLoader, dispatchNoiceBoard]);
 
   const handleTransition = (option: 'less' | 'more') => {
     const behaviors = {
@@ -99,7 +89,7 @@ export default function CommentsPage() {
       <br />      
       <Registry id={clientId as unknown as string} updateFields={updateFields} { ...registry } />
       <CommentsAdd clientId={clientId_n} listId={urlSearshParams.listId as string} />
-      <CommentsHistory history={historyComments} />
+      <CommentsHistory docId={clientId as string} loadId={loadId} />
     </>
   );
 
