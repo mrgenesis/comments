@@ -36,15 +36,18 @@ REACT_APP_MESSAGING_SENDER_ID=<messagingSenderId>
 REACT_APP_APP_ID=<appId>
 ```
 
-Note que “`<foo>`” deve ser substituído pelo valor real.
+O que está entre `<>` deve ser substituído pelo valor real. Exemplo: `REACT_APP_API_KEY=XXXXXX`.
 
 
 ```
 $ npm run build
 # ou 
 $ yarn build
-$ firebase login
 ```
+
+Faça login no console:
+
+`$ firebase login`
 
 
 Esse comando acima, vai solicitar que realize login em seu navegador. Após realizar login, realize o deploy do aplicativo da seguinte forma:
