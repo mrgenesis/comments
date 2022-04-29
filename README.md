@@ -13,7 +13,8 @@ se a ID for um telefone, pode gerar um link de chat no WhatsApp
 Dados necessário para configuração da lista sequencial:
 nome, tipo, n. inicial, n. final, se gera link para o WhatsApp
 
-
+### *Não Sequencial:*
+*Em breve...*
 
 ## Instalação:
 Pré requisito:NodeJS v17.7.2 ou superior
