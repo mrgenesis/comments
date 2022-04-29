@@ -81,7 +81,7 @@ export class Generic<T> {
     return this;
   }
   async selectAllDocs(): Promise<this> {
-    this._querySnapshot = await getDocs(this.collectionRef);
+    this._querySnapshot = await getDocs(this._query || this.collectionRef);
     return this;
   }
   docsData(): T[] {
