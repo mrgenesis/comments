@@ -18,10 +18,11 @@ nome, tipo, n. inicial, n. final, se gera link para o WhatsApp
 
 ## Instalação:
 *Pré requisito:*
+
 NodeJS v17.7.2 ou superior
 Firebase v10.7.2 ou superior
 
-*Download*
+## *Download*
 
 ```$ git clone git@github.com:mrgenesis/comments.git```
 
@@ -32,9 +33,9 @@ $ npm install
 #ou 
 $ yarn instal
 ```
-*Configuraçao*
+### *Configuraçao*
 
-Acesso o seu projeto no firebase e recupere os dados de acesso (https://console.firebase.google.com/project). Crie o arquivo .env.production.local com o seguinte conteúdo:
+Acesso o seu projeto no firebase e recupere os dados de acesso (https://console.firebase.google.com/project). Crie o arquivo `.env.production.local` com o seguinte conteúdo:
 ```
 REACT_APP_API_KEY=<apiKey>
 REACT_APP_AUTH_DOMAIN=<authDomain>
@@ -44,7 +45,7 @@ REACT_APP_MESSAGING_SENDER_ID=<messagingSenderId>
 REACT_APP_APP_ID=<appId>
 ```
 
-O que está entre `<>` deve ser substituído pelo valor real. Exemplo: `REACT_APP_API_KEY=XXXXXX`.
+O que está entre `<>` deve ser substituído pelo valor real. As marcações `<>` devem ser removidas. Exemplo: `REACT_APP_API_KEY=XXXXXX`.
 
 
 ```
@@ -53,14 +54,15 @@ $ npm run build
 $ yarn build
 ```
 
-*Faça login no console*
+### *Faça login no console*
 
 `$ firebase login`
 
 
 Esse comando acima, vai solicitar que realize login em seu navegador. 
 
-*Permissão de acesso*
+### *Permissão de acesso*
+
 Abra o arquivo `firestore.rule` e escreva seu e-mail do Google no local indicado.
 ```
 rules_version = '2';
@@ -68,19 +70,20 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
       allow read, write: if
-        request.auth.token.email == <seu-e-mail@Google>;
+        request.auth.token.email == "<seu-e-mail@Google>";
     }
   }
 }
 ```
 Se quiser autorizar outras usuários, encadei outros e-mail usando o operador `Or` da seguinte forma:
-`request.auth.token.email == A@Google || B@Google || C@Google;`.
-No exemplo acima, os usuários dos e-mails A@Google,  B@Google e C@Google terão acesso ao sistema.
+`request.auth.token.email == "A@Google" || request.auth.token.email == "B@Google" || request.auth.token.email == "C@Google";`.
+No exemplo acima, os usuários dos e-mails "A@Google",  "B@Google" e "C@Google" terão acesso ao sistema.
+Obs.: As aspas devem ser mantidas.
 Após editar o arquivo, faça o deploy das regras com o seguinte comando:
 
 `$ firebase deploy --only firestore:rules`
 
-*Deploy*
+### *Deploy*
 
 Após realizar login, realize o deploy do aplicativo da seguinte forma:
 `$ firebase deploy --only hosting`
