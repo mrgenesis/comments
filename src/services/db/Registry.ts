@@ -7,13 +7,16 @@ export class RegistryModel {
 }
 
 export class Registry extends Generic<RegistryModel> {
-  async addListIdProperty(listId: string): Promise<void> {
+  async firstSave(listId: string): Promise<void> {
     if(this._docSnap.exists()) {
       return;
     }
     return this.update({
       _config: {
         listId
+      },
+      contactPhones: {
+        callNumber: this._docSnap.id
       }
     });
   }
