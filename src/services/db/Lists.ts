@@ -1,22 +1,19 @@
 
-import { IList } from "../../interfaces";
-import { IHistoryStatus, ListTypes, IsPhoneNumberId } from "../../types";
+import { IList, IConfigOfButtonNext } from "../../interfaces";
+import { ListTypes, IsPhoneNumberId } from "../../types";
 import { Generic } from "./Generic";
  import { collectionsNames } from "../../__config";
 
 export class ListsModel implements IList {
-  name: string;
+  listId: string;
   listType: ListTypes;
   isPhoneNumberId: IsPhoneNumberId;
   beginning: number;
   end: number;
   lastItemUpdated: number;
-  configOfButtonNext: {
-    behavior: string;
-    status: IHistoryStatus;
-  };
-  constructor({ name, listType, isPhoneNumberId, beginning, end, lastItemUpdated, configOfButtonNext }: IList) {
-    this.name = name;
+  configOfButtonNext: IConfigOfButtonNext;
+  constructor({ listId, listType, isPhoneNumberId, beginning, end, lastItemUpdated, configOfButtonNext }: IList) {
+    this.listId = listId;
     this.listType = listType;
     this.isPhoneNumberId = isPhoneNumberId;
     this.beginning = beginning;

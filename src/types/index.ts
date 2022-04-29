@@ -20,3 +20,5 @@ export type IHistoryStatus =
 
 export type ListTypes = 'Sequencial';
 export type IsPhoneNumberId = '0' | '1';
+
+export type BehaviorOptionsButtonNext = 'Sequencial' | 'Por Status';

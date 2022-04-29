@@ -15,6 +15,9 @@ import NextButtonBehavior from "../../components/Search/NextButtonBehavior";
 
 import { CommentCollection } from "../../services/db/Comment";
 import { Registry as RegistryCollection } from "../../services/db/Registry";
+import { generateContactLink } from "../../commun/utils/generate-contact-link";
+import { IList } from "../../interfaces";
+import { urlValidation } from "./urlValidation";
 
 const registryCollection = new RegistryCollection('records');
 
@@ -22,18 +25,17 @@ const registryCollection = new RegistryCollection('records');
 export default function CommentsPage() {
   const { clientId } = useParams();
   const clientId_n = convert.fromString(clientId).toNumber();
+
   const [queryString] = useSearchParams();
-  const listId = queryString.get('listId');
+  const urlSearshParams: any = {};
+  queryString.forEach((value, key) => {
+    urlSearshParams[key] = value;
+  });
+
   const navegate = useNavigate();
   const [, dispatchLoader] = useContext(LoaderContext);
   const [, dispatchNoiceBoard] = useContext(NoticeContext);
   
-  let listConfig: any = localStorage.getItem(listId as string);
-  try {
-    listConfig = JSON.parse(listConfig as string);
-  } catch(err) {
-    listConfig = null;
-  }
 
   const [behavior, setBehavior] = useState<'addOrDecreaseOne' | 'nextOfQueue'>('addOrDecreaseOne');
   const [registry, setRegistry] = useState<DocumentData>({});
@@ -46,20 +48,19 @@ export default function CommentsPage() {
   }
   
   useEffect(() => {
-    if (dataTypes.isNull(listConfig)) {
-      dispatchNoiceBoard({ type: 'GENERIC', payload: { children: <a href='/'>Ir à tela inicial</a>, severity: 'warning', hiddenStatus: false, message: `Não consegui encontrar os dados da lista "${listId}". Normalmente isso acontece quando é a primeira vez que usa este navegador. Selecione a lista pela tela inicial para que o sistema carregue todas as informações.` } });
-      return;
-    }
     if (dataTypes.expect(loadId).theSameAs(true)) {
-      setLoadId(false);
-      dispatchLoader({ type: 'LOADING' });
-      
-      const commentCollection = new CommentCollection(clientId as string);
-      commentCollection.setQueryConstraint({ queryConstraint: 'orderBy', fieldPath: 'timestamp', directionStr: "desc" });
-      commentCollection.onQuerySnapshot(commentHistory => {
-        setHistoryComments(commentHistory);
-        dispatchLoader({ type: 'DONE' });
-      });      
+      try {
+        setLoadId(false);
+        urlValidation(urlSearshParams);
+
+        dispatchLoader({ type: 'LOADING' });
+        
+        const commentCollection = new CommentCollection(clientId as string);
+        commentCollection.setQueryConstraint({ queryConstraint: 'orderBy', fieldPath: 'timestamp', directionStr: "desc" });
+        commentCollection.onQuerySnapshot(commentHistory => {
+          setHistoryComments(commentHistory);
+          dispatchLoader({ type: 'DONE' });
+        });      
       
       registryCollection.selectById(clientId as string).then(() => {
         registryCollection.onDocSnapshot(registry => {
@@ -68,30 +69,36 @@ export default function CommentsPage() {
         });
       })
       .catch(err => console.error('registryCollection:', err))
-      .finally(() => registryCollection.addListIdProperty(listId as string));
+      .finally(() => {
+        registryCollection.firstSave(urlSearshParams.listId);
+      })
       
+    } catch(err: any) {
+      console.error(err);
+      dispatchNoiceBoard({ type: 'ERROR', payload: { children: <a href="/">Página de listas</a>, message: `${err.message} Na maioria dos casos é possível corrigir isso voltando à página para selecionar a lista.` } })
     }
-  }, [loadId, clientId, listId, dispatchLoader, listConfig, dispatchNoiceBoard]);
+    }
+  }, [loadId, clientId, dispatchLoader, urlSearshParams, dispatchNoiceBoard]);
 
   const handleTransition = (option: 'less' | 'more') => {
     const behaviors = {
       addOrDecreaseOne: () => {
-        const getRegistry = addOrDecreaseOne({ ...listConfig, clientId_n });
+        const getRegistry = addOrDecreaseOne({ ...urlSearshParams, clientId_n });
         return getRegistry(option);
       },
       nextOfQueue: () => nextOfQueue(option, clientId as string, dispatchNoiceBoard)
     }
-    navegate(`/comments/${behaviors[behavior]()}?listId=${listId}`);
+    navegate(generateContactLink(urlSearshParams as IList, behaviors[behavior]()));
     setLoadId(true);
   }
 
   return (
     <>
-      <NextButtonBehavior listId={listId as string} behavior={behavior} setBehavior={setBehavior} />
+      <NextButtonBehavior listId={urlSearshParams.listId as string} behavior={behavior} setBehavior={setBehavior} />
       <SearchOneItem handleTransition={handleTransition} />
       <br />      
       <Registry id={clientId as unknown as string} updateFields={updateFields} { ...registry } />
-      <CommentsAdd clientId={clientId_n} listId={listId as string} />
+      <CommentsAdd clientId={clientId_n} listId={urlSearshParams.listId as string} />
       <CommentsHistory history={historyComments} />
     </>
   );

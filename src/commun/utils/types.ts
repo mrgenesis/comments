@@ -8,6 +8,9 @@ export default class DataTypes {
   theSameAs(compared: any) {
     return this.expected === compared;
   }
+  toBeString() {
+    return typeof this.expected === 'string';
+  }
   toBeDifferentOf(compared: any) {
     return this.expected !== compared;
   }

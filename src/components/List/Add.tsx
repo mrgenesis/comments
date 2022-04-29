@@ -30,7 +30,7 @@ const ListAdd: React.FunctionComponent<{}> = () => {
     e.preventDefault();
     try {
       dispatchNotice({ type: 'RESET' });
-      await listsCollection.create({ listType, isPhoneNumberId, beginning, end, lastItemUpdated: (beginning - 1), name: listName, configOfButtonNext: { status: '', behavior: '' }  }, listName);
+      await listsCollection.create({ listType, isPhoneNumberId, beginning, end, lastItemUpdated: (beginning - 1), listId: listName, configOfButtonNext: { 'Por Status': {}, Sequencial: { nextItem: beginning}, behavior: 'Sequencial' }  }, listName);
       navegate('/');
       setListName('');
       setBeginning(0);

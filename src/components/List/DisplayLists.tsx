@@ -1,6 +1,7 @@
 
 import { useNavigate } from 'react-router-dom';
-import { uid, addOrDecreaseOne } from '../../commun/utils';
+import { uid } from '../../commun/utils';
+import { generateContactLink } from '../../commun/utils/generate-contact-link';
 import { IList } from '../../interfaces';
 import UIChip from '../UI/dataDisplay/Chip';
 
@@ -9,10 +10,8 @@ const DisplayLists:  React.FunctionComponent<{ lists: IList[] }>  = ({ lists }) 
   const navegate = useNavigate();
 
   const handleSelectedList = (list: IList) => {
-    localStorage.removeItem(list.name);
-    localStorage.setItem(list.name, JSON.stringify(list));
-    const getRegistry = addOrDecreaseOne(list);
-    navegate(`/comments/${getRegistry('more')}?listId=${list.name}&beginning=${list.beginning}&end=${list.end}&isPhoneNumberId=${list.isPhoneNumberId}`);
+    const nextItem = (list.configOfButtonNext[list.configOfButtonNext.behavior]?.nextItem || ++list.lastItemUpdated);
+    navegate(generateContactLink(list, nextItem as string));
   }
   
   const generateTitel = {
@@ -28,7 +27,7 @@ const DisplayLists:  React.FunctionComponent<{ lists: IList[] }>  = ({ lists }) 
           key={uid()} 
           sx={{ margin: 0.3 }} 
           onClick={() => handleSelectedList(list)} 
-          label={list.name} 
+          label={list.listId} 
           />
         );
       })}

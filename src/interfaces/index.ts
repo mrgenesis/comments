@@ -1,5 +1,5 @@
 import React from "react";
-import { IHistoryStatus, IsPhoneNumberId, ListTypes } from "../types";
+import { BehaviorOptionsButtonNext, IHistoryStatus, IsPhoneNumberId, ListTypes } from "../types";
 
 export interface INotice {
   hiddenStatus?: boolean;
@@ -11,17 +11,24 @@ export interface NoticeAction {
   type: string;
   payload?: INotice;
 }
+export interface IConfigOfButtonNext {
+  Sequencial: {
+    nextItem: string | number;
+  }
+  'Por Status': {
+    nextItem?: string | number;
+    status?: IHistoryStatus;
+  }
+  behavior: BehaviorOptionsButtonNext;
+}
 export interface IList {
-  name: string;
+  listId: string;
   listType: ListTypes;
   isPhoneNumberId: IsPhoneNumberId;
   beginning: number;
   end: number;
   lastItemUpdated: number;
-  configOfButtonNext: {
-    behavior: string;
-    status: IHistoryStatus;
-  }
+  configOfButtonNext: IConfigOfButtonNext;
 };
 
 export interface LoaderState { loading: boolean, message?: string; };

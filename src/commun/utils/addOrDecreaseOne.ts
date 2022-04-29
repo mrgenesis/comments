@@ -4,7 +4,7 @@ interface INexRegister extends IList {
   clientId_n?: number;
 }
 
-export const addOrDecreaseOne: any = ({ beginning, end, lastItemUpdated, name, clientId_n }: INexRegister) =>  {
+export const addOrDecreaseOne: any = ({ beginning, end, lastItemUpdated, clientId_n }: INexRegister) =>  {
   const behaviors = {
     less: () => {
       const nextId = clientId_n ? clientId_n - 1 : lastItemUpdated - 1;
