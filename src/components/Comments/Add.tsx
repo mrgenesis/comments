@@ -5,13 +5,14 @@ import UITextField from "../UI/fields/TextField";
 import { uid } from "../../commun/utils";
 import UIButton from "../UI/fields/Button";
 import UIFormControl from "../UI/fields/FormControl";
+import Icon from '@mdi/react';
+import { mdiFormatListChecks } from '@mdi/js';
 
 import React, { useContext, useState } from "react";
 import { LoaderContext } from "../../contexts/loader";
 import { NoticeContext } from "../../contexts/notice";
 import { IHistoryStatus } from "../../types";
 import { Registry } from "../../services/db/Registry";
-import UIDivider from "../UI/dataDisplay/Divider";
 
 import { Comment, CommentCollection } from "../../services/db/Comment";
 import { ListsCollection } from "../../services/db/Lists";
@@ -32,7 +33,7 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
     e.preventDefault();
     if (status === '') {
       dispatch({ type: 'DONE' });
-      return dispatchNotice({ type: 'GENERIC', payload: { message: 'O status deve ser preenchido.', severity: 'warning', hiddenStatus: false } });
+      return dispatchNotice({ type: 'GENERIC', payload: { message: 'Escolha um status antes de salvar. Não é possível adicionar um registro com status vazio.', severity: 'warning', hiddenStatus: false } });
     }
     const comment = new Comment({ status, message });    
     
@@ -56,8 +57,7 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
   
   return (
     <>
-      <UIDivider sx={{ margin: '10px 0 5px 0' }} />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: 20, width: '100%' }}>
         <UIFormControl fullWidth>
           <UISelect disabled={state.loading}
           onChange={(e) => setStatus(e.target.value as IHistoryStatus)} 
@@ -67,7 +67,7 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
             disabled={true}
             value={'Escolha um Status'}
             >
-              Escolha um Status
+              <Icon style={{ verticalAlign: 'middle' }} path={mdiFormatListChecks} size={0.8} title='' /> Escolha um Status *
             </UIMenuItem>
             {
               Texts.status.map(statusName => 
@@ -82,13 +82,12 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
           </UISelect>
         </UIFormControl>
         <UIFormControl fullWidth>
-          <UITextField disabled={state.loading} label='Digite uma mensagem' multiline value={message} onChange={(e) => setMessage(e.target.value)} />
+          <UITextField disabled={state.loading} label='Texto do comentário (opicional)' multiline value={message} onChange={(e) => setMessage(e.target.value)} />
         </UIFormControl>
         <UIFormControl fullWidth> 
-          <UIButton disabled={state.loading} type="submit">Salvar</UIButton>
+          <UIButton variant="outlined" disabled={state.loading} type="submit">Adicionar registro</UIButton>
         </UIFormControl>     
-      </form>
-      <UIDivider />
+      </form>---
     </>
   );
 }

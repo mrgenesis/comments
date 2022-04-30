@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { IconButton, InputBase, Paper } from "@mui/material";
 import { mdiMagnify } from '@mdi/js';
 import Icon from '@mdi/react';
-import { useContext, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { LoaderContext } from "../../contexts/loader";
 import { NoticeContext } from "../../contexts/notice";
 
@@ -24,7 +24,8 @@ const SearchOneItem: React.FC<{ handleTransition: (v: 'less' | 'more') => any }>
   const [queryString] = useSearchParams();
   const listType = queryString.get('listType');  
 
-  const handleSearching = async () => {
+  const handleSearching = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       dispatchLoader({ type: 'LOADING' });
       if (searchField === '') {
@@ -64,11 +65,13 @@ const SearchOneItem: React.FC<{ handleTransition: (v: 'less' | 'more') => any }>
   }
   return (
     <>
-      <Paper
-        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
+      <Paper 
+      component='form'
+      onSubmit={handleSearching}
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: '100%' }}
       >
         <SearchNextOrPreview handleTransition={handleTransition} listType={listType as string} payload="less" />
-          
+
         <InputBase 
         value={searchField}
         onChange={(e) => setSeachFiel(e.target.value)}
@@ -76,7 +79,7 @@ const SearchOneItem: React.FC<{ handleTransition: (v: 'less' | 'more') => any }>
         placeholder="Localize um registro pela ID"
         />
 
-        <IconButton onClick={() => handleSearching()}>
+        <IconButton type="submit">
           <Icon path={mdiMagnify} size={1} title='Clique para localizar um item' />
         </IconButton>
 

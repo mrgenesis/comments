@@ -86,9 +86,8 @@ export default function CommentsPage() {
     <>
       <NextButtonBehavior listId={urlSearshParams.listId as string} behavior={behavior} setBehavior={setBehavior} />
       <SearchOneItem handleTransition={handleTransition} />
-      <br />      
-      <Registry id={clientId as unknown as string} updateFields={updateFields} { ...registry } />
       <CommentsAdd clientId={clientId_n} listId={urlSearshParams.listId as string} />
+      <Registry id={clientId as unknown as string} updateFields={updateFields} { ...registry } />
       <CommentsHistory docId={clientId as string} loadId={loadId} />
     </>
   );
