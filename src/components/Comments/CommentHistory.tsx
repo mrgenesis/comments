@@ -3,7 +3,7 @@ import { uid } from "../../commun/utils";
 import UIPaper from "../UI/dataDisplay/Paper";
 import UITypography from "../UI/dataDisplay/Typography";
 import { Comment, CommentCollection } from "../../services/db/Comment";
-import { useState } from "react";
+import { useState, memo } from "react";
 
 
 const CommentsHistory = ({ docId, loadId }: { docId: string, loadId: boolean }) => {  
@@ -46,4 +46,4 @@ const CommentsHistory = ({ docId, loadId }: { docId: string, loadId: boolean }) 
   
 }
 
-export default CommentsHistory;
+export default memo(CommentsHistory);
