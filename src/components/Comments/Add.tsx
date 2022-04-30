@@ -5,14 +5,13 @@ import UITextField from "../UI/fields/TextField";
 import { uid } from "../../commun/utils";
 import UIButton from "../UI/fields/Button";
 import UIFormControl from "../UI/fields/FormControl";
-import Icon from '@mdi/react';
-import { mdiFormatListChecks } from '@mdi/js';
 
 import React, { useContext, useState } from "react";
 import { LoaderContext } from "../../contexts/loader";
 import { NoticeContext } from "../../contexts/notice";
 import { IHistoryStatus } from "../../types";
 import { Registry } from "../../services/db/Registry";
+import ListIcon from '@mui/icons-material/FormatListBulleted';
 
 import { Comment, CommentCollection } from "../../services/db/Comment";
 import { ListsCollection } from "../../services/db/Lists";
@@ -67,7 +66,7 @@ export default function CommentsAdd({ clientId, listId }: { clientId: number, li
             disabled={true}
             value={'Escolha um Status'}
             >
-              <Icon style={{ verticalAlign: 'middle' }} path={mdiFormatListChecks} size={0.8} title='' /> Escolha um Status *
+              <ListIcon fontSize="small" sx={{ verticalAlign: 'middle' }} /> Escolha um Status *
             </UIMenuItem>
             {
               Texts.status.map(statusName => 
